@@ -7,6 +7,9 @@ var React = require("react");
 var ReactDom = require("react-dom");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
+var Webapi__Dom__Element = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Element.js");
+var Webapi__Dom__Document = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Document.js");
 
 Css.$$global("body", /* :: */[
       Css.margin(Css.px(0)),
@@ -79,6 +82,22 @@ function App$Modal$Overlay(Props) {
                     return /* () */0;
                   });
         }), /* array */[]);
+  React.useEffect((function () {
+          Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (x) {
+                          return Caml_option.nullable_to_opt(x.body);
+                        })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (x) {
+                  x.setAttribute("style", "overflow:hidden");
+                  return /* () */0;
+                }));
+          return (function (param) {
+                    return Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
+                                          return Caml_option.nullable_to_opt(prim.body);
+                                        })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (param) {
+                                  param.setAttribute("style", "overflow:auto");
+                                  return /* () */0;
+                                }));
+                  });
+        }), /* array */[]);
   return React.createElement("div", {
               className: Css.style(/* :: */[
                     Css.position(/* fixed */10615156),
@@ -148,13 +167,8 @@ function App$Modal$ModalContentWrapper(Props) {
                       ]
                     ]
                   ]),
-              onKeyPress: (function (e) {
-                  console.log("sadfsd");
-                  return /* () */0;
-                }),
               onClick: (function (e) {
                   e.stopPropagation();
-                  console.log("from inside");
                   return /* () */0;
                 })
             }, children);

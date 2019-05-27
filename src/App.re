@@ -19,9 +19,6 @@ module Modal = {
             100.->vw->width,
             background(`hex("000")),
             opacity(0.5),
-            // display(`flex),
-            // flexDirection(`column),
-            // justifyContent(`center),
           ])
         )
       />;
@@ -51,6 +48,38 @@ module Modal = {
         [||],
       );
 
+      React.useEffect1(
+        () => {
+          Webapi.Dom.document
+          ->Webapi.Dom.Document.asHtmlDocument
+          ->Belt.Option.flatMap(x => Webapi.Dom.HtmlDocument.body(x))
+          ->Belt.Option.flatMap(x => Webapi.(Dom.Element.asHtmlElement(x)))
+          ->Belt.Option.mapWithDefault((), x =>
+              Webapi.Dom.HtmlElement.setAttribute(
+                "style",
+                "overflow:hidden",
+                x,
+              )
+            );
+
+          Some(
+            () =>
+              Webapi.Dom.document
+              ->Webapi.Dom.Document.asHtmlDocument
+              ->Belt.Option.flatMap(Webapi.Dom.HtmlDocument.body)
+              ->Belt.Option.flatMap(Webapi.Dom.Element.asHtmlElement)
+              ->Belt.Option.mapWithDefault(
+                  (),
+                  Webapi.Dom.HtmlElement.setAttribute(
+                    "style",
+                    "overflow:auto",
+                  ),
+                ),
+          );
+        },
+        [||],
+      );
+
       <div
         onClick={e => {
           e->ReactEvent.Mouse.stopPropagation;
@@ -66,8 +95,6 @@ module Modal = {
             999->zIndex,
             100.->vh->height,
             100.->vw->width,
-            // background(`hex("000")),
-            // opacity(0.5),
             display(`flex),
             flexDirection(`column),
             justifyContent(`center),
@@ -82,11 +109,7 @@ module Modal = {
     [@react.component]
     let make = (~children) => {
       <div
-        onClick={e => {
-          e->ReactEvent.Mouse.stopPropagation;
-          "from inside"->Js.log;
-        }}
-        onKeyPress={e => "sadfsd"->Js.log}
+        onClick={e => e->ReactEvent.Mouse.stopPropagation}
         className=Css.(
           style([
             999->zIndex,
