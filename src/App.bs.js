@@ -116,23 +116,35 @@ function App$Modal$Overlay(Props) {
         }), /* array */[]);
   React.useEffect((function () {
           var $$process = function (param) {
-            return Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
-                                          return Caml_option.nullable_to_opt(prim.body);
-                                        })), Webapi__Dom__Element.asHtmlElement), (function (prim) {
-                                  return prim.childNodes;
-                                })), /* array */[], (function (prim) {
-                              return Array.prototype.slice.call(prim);
+            return Belt_Array.keep(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
+                                              return Caml_option.nullable_to_opt(prim.body);
+                                            })), Webapi__Dom__Element.asHtmlElement), (function (prim) {
+                                      return prim.childNodes;
+                                    })), /* array */[], (function (prim) {
+                                  return Array.prototype.slice.call(prim);
+                                })), (function (node) {
+                              var match = overlayRef.current;
+                              if (match == null) {
+                                return true;
+                              } else {
+                                return !node.contains(match);
+                              }
                             })), (function (node) {
-                          var match = overlayRef.current;
-                          if (match == null) {
-                            return true;
-                          } else {
-                            return !node.contains(match);
-                          }
+                          Belt_Array.forEach(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Webapi__Dom__Element.ofNode(node), (function (param) {
+                                              return param.getElementsByTagName("*");
+                                            })), /* array */[], (function (prim) {
+                                          return Array.prototype.slice.call(prim);
+                                        })), (function (_x) {
+                                      return true;
+                                    })), (function (x) {
+                                  x.setAttribute("tabindex", "-1");
+                                  return /* () */0;
+                                }));
+                          return true;
                         }));
           };
           setTimeout((function (param) {
-                  console.log($$process(/* () */0));
+                  $$process(/* () */0);
                   return /* () */0;
                 }), 10);
           return undefined;

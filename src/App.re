@@ -99,9 +99,27 @@ module Modal = {
                 | Some(overlay) => !Webapi.Dom.Node.contains(overlay, node)
                 | None => true
                 }
-              );
+              )
+            ->Belt.Array.keep(node => {
+                node
+                ->Webapi.Dom.Element.ofNode
+                ->Belt.Option.map(
+                    Webapi.Dom.Element.getElementsByTagName("*"),
+                  )
+                ->Belt.Option.mapWithDefault(
+                    [||],
+                    Webapi.Dom.HtmlCollection.toArray,
+                  )
+                ->Belt.Array.keep(_x => true)
+                // Webapi.Dom.Element.hasAttribute("tabindex"),
+                ->Belt.Array.forEach(x =>
+                    Webapi.Dom.Element.setAttribute("tabindex", "-1", x)
+                  );
 
-          Js.Global.setTimeout(() => ()->process->Js.log, 10)->ignore;
+                true;
+              });
+
+          Js.Global.setTimeout(() => ()->process->ignore, 10)->ignore;
 
           None;
         },
