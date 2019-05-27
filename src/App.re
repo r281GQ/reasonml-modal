@@ -1,7 +1,22 @@
 module Modal = {
+  let renderToBody = reactElement => {
+    let document = Webapi.Dom.document;
+
+    "body"
+    ->Webapi.Dom.Document.getElementsByTagName(document)
+    ->Webapi.Dom.HtmlCollection.toArray
+    ->Belt.Array.get(0)
+    ->Belt.Option.mapWithDefault(
+        React.null,
+        ReactDOMRe.createPortal(reactElement),
+      );
+  };
+
   [@react.component]
   let make = (~isOpen: bool) => {
-    isOpen ? <div> "this is the modal"->React.string </div> : React.null;
+    isOpen
+      ? renderToBody(<div> "this is the modal"->React.string </div>)
+      : React.null;
   };
 };
 

@@ -3,17 +3,30 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var ReactDom = require("react-dom");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
+
+function renderToBody(reactElement) {
+  var $$document$1 = document;
+  return Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call($$document$1.getElementsByTagName("body")), 0), null, (function (param) {
+                return ReactDom.createPortal(reactElement, param);
+              }));
+}
 
 function App$Modal(Props) {
   var isOpen = Props.isOpen;
   if (isOpen) {
-    return React.createElement("div", undefined, "this is the modal");
+    return renderToBody(React.createElement("div", undefined, "this is the modal"));
   } else {
     return null;
   }
 }
 
-var Modal = /* module */[/* make */App$Modal];
+var Modal = /* module */[
+  /* renderToBody */renderToBody,
+  /* make */App$Modal
+];
 
 function App(Props) {
   var match = React.useState((function () {
