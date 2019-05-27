@@ -30,7 +30,7 @@ function convert(param) {
   }
 }
 
-function setBodyOverflow(value) {
+function setScrollLock(value) {
   var partial_arg = "overflow:" + (
     value ? "auto" : "hidden"
   );
@@ -44,7 +44,7 @@ function setBodyOverflow(value) {
 
 var Helper = /* module */[
   /* convert */convert,
-  /* setBodyOverflow */setBodyOverflow
+  /* setScrollLock */setScrollLock
 ];
 
 function App$Modal$Cover(Props) {
@@ -92,6 +92,7 @@ function App$Modal$Overlay(Props) {
   var children = Props.children;
   var onOverlayClick = Props.onOverlayClick;
   var onEsc = Props.onEsc;
+  var overlayRef = React.useRef(null);
   var escapeHandler = function ($$event) {
     var match = $$event.key;
     if (match === "Escape") {
@@ -108,12 +109,36 @@ function App$Modal$Overlay(Props) {
                   });
         }), /* array */[]);
   React.useEffect((function () {
-          setBodyOverflow(/* Hidden */0);
+          setScrollLock(/* Lock */0);
           return (function (param) {
-                    return setBodyOverflow(/* Auto */1);
+                    return setScrollLock(/* Unlock */1);
                   });
         }), /* array */[]);
+  React.useEffect((function () {
+          var $$process = function (param) {
+            return Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
+                                          return Caml_option.nullable_to_opt(prim.body);
+                                        })), Webapi__Dom__Element.asHtmlElement), (function (prim) {
+                                  return prim.childNodes;
+                                })), /* array */[], (function (prim) {
+                              return Array.prototype.slice.call(prim);
+                            })), (function (node) {
+                          var match = overlayRef.current;
+                          if (match == null) {
+                            return true;
+                          } else {
+                            return !node.contains(match);
+                          }
+                        }));
+          };
+          setTimeout((function (param) {
+                  console.log($$process(/* () */0));
+                  return /* () */0;
+                }), 10);
+          return undefined;
+        }), /* array */[]);
   return React.createElement("div", {
+              ref: overlayRef,
               className: Css.style(/* :: */[
                     Css.position(/* fixed */10615156),
                     /* :: */[

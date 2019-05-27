@@ -5,15 +5,15 @@ Css.(
 module Modal = {
   module Helper = {
     type overFlow =
-      | Hidden
-      | Auto;
+      | Lock
+      | Unlock;
 
     let convert =
       fun
-      | Hidden => "hidden"
-      | Auto => "auto";
+      | Lock => "hidden"
+      | Unlock => "auto";
 
-    let setBodyOverflow = value =>
+    let setScrollLock = value =>
       Webapi.Dom.document
       ->Webapi.Dom.Document.asHtmlDocument
       ->Belt.Option.flatMap(Webapi.Dom.HtmlDocument.body)
@@ -52,6 +52,8 @@ module Modal = {
   module Overlay = {
     [@react.component]
     let make = (~children, ~onOverlayClick, ~onEsc) => {
+      let overlayRef = React.useRef(Js.Nullable.null);
+
       let escapeHandler = event =>
         switch (event->Webapi.Dom.KeyboardEvent.key) {
         | "Escape" => onEsc()
@@ -76,17 +78,41 @@ module Modal = {
         () => {
           open Helper;
 
-          setBodyOverflow(Hidden);
+          Lock->setScrollLock;
 
-          Some(() => setBodyOverflow(Auto));
+          Some(() => Unlock->setScrollLock);
+        },
+        [||],
+      );
+
+      React.useEffect1(
+        () => {
+          let process = () =>
+            Webapi.Dom.document
+            ->Webapi.Dom.Document.asHtmlDocument
+            ->Belt.Option.flatMap(Webapi.Dom.HtmlDocument.body)
+            ->Belt.Option.flatMap(Webapi.Dom.Element.asHtmlElement)
+            ->Belt.Option.map(Webapi.Dom.HtmlElement.childNodes)
+            ->Belt.Option.mapWithDefault([||], Webapi.Dom.NodeList.toArray)
+            ->Belt.Array.keep(node =>
+                switch (overlayRef->React.Ref.current->Js.Nullable.toOption) {
+                | Some(overlay) => !Webapi.Dom.Node.contains(overlay, node)
+                | None => true
+                }
+              );
+
+          Js.Global.setTimeout(() => ()->process->Js.log, 10)->ignore;
+
+          None;
         },
         [||],
       );
 
       <div
+        ref={overlayRef->ReactDOMRe.Ref.domRef}
         onClick={e => {
           e->ReactEvent.Mouse.stopPropagation;
-          onOverlayClick(e);
+          e->onOverlayClick;
         }}
         className=Css.(
           style([
