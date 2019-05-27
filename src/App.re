@@ -3,13 +3,58 @@ Css.(
 );
 
 module Modal = {
+  module Cover = {
+    [@react.component]
+    let make = () => {
+      <div
+        className=Css.(
+          style([
+            `fixed->position,
+            0->px->top,
+            0->px->left,
+            0->px->right,
+            0->px->bottom,
+            500->zIndex,
+            100.->vh->height,
+            100.->vw->width,
+            background(`hex("000")),
+            opacity(0.5),
+            // display(`flex),
+            // flexDirection(`column),
+            // justifyContent(`center),
+          ])
+        )
+      />;
+    };
+  };
+
   module Overlay = {
     [@react.component]
-    let make = (~children, ~onClick) => {
+    let make = (~children, ~onOverlayClick, ~onEsc) => {
+      let escapeHandler = event =>
+        switch (event->Webapi.Dom.KeyboardEvent.key) {
+        | "Escape" => onEsc()
+        | _ => ()
+        };
+
+      React.useEffect1(
+        () => {
+          Webapi.Dom.window
+          |> Webapi.Dom.Window.addKeyDownEventListener(escapeHandler);
+
+          Some(
+            () =>
+              Webapi.Dom.window
+              |> Webapi.Dom.Window.removeKeyDownEventListener(escapeHandler),
+          );
+        },
+        [||],
+      );
+
       <div
         onClick={e => {
           e->ReactEvent.Mouse.stopPropagation;
-          onClick(e);
+          onOverlayClick(e);
         }}
         className=Css.(
           style([
@@ -21,8 +66,8 @@ module Modal = {
             999->zIndex,
             100.->vh->height,
             100.->vw->width,
-            background(`hex("000")),
-            opacity(0.5),
+            // background(`hex("000")),
+            // opacity(0.5),
             display(`flex),
             flexDirection(`column),
             justifyContent(`center),
@@ -41,8 +86,10 @@ module Modal = {
           e->ReactEvent.Mouse.stopPropagation;
           "from inside"->Js.log;
         }}
+        onKeyPress={e => "sadfsd"->Js.log}
         className=Css.(
           style([
+            999->zIndex,
             background(`hex("fff")),
             maxWidth(`percent(50.)),
             marginLeft(`auto),
@@ -64,7 +111,8 @@ module Modal = {
     ->Belt.Option.mapWithDefault(
         React.null,
         ReactDOMRe.createPortal(
-          <Overlay onClick=onOverlayClick>
+          <Overlay onOverlayClick onEsc>
+            <Cover />
             <ModalContentWrapper> element </ModalContentWrapper>
           </Overlay>,
         ),

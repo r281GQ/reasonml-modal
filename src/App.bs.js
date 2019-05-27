@@ -19,9 +19,66 @@ Css.$$global("body", /* :: */[
       ]
     ]);
 
+function App$Modal$Cover(Props) {
+  return React.createElement("div", {
+              className: Css.style(/* :: */[
+                    Css.position(/* fixed */10615156),
+                    /* :: */[
+                      Css.top(Css.px(0)),
+                      /* :: */[
+                        Css.left(Css.px(0)),
+                        /* :: */[
+                          Css.right(Css.px(0)),
+                          /* :: */[
+                            Css.bottom(Css.px(0)),
+                            /* :: */[
+                              Css.zIndex(500),
+                              /* :: */[
+                                Css.height(Css.vh(100)),
+                                /* :: */[
+                                  Css.width(Css.vw(100)),
+                                  /* :: */[
+                                    Css.background(/* `hex */[
+                                          5194459,
+                                          "000"
+                                        ]),
+                                    /* :: */[
+                                      Css.opacity(0.5),
+                                      /* [] */0
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ])
+            });
+}
+
+var Cover = /* module */[/* make */App$Modal$Cover];
+
 function App$Modal$Overlay(Props) {
   var children = Props.children;
-  var onClick = Props.onClick;
+  var onOverlayClick = Props.onOverlayClick;
+  var onEsc = Props.onEsc;
+  var escapeHandler = function ($$event) {
+    var match = $$event.key;
+    if (match === "Escape") {
+      return Curry._1(onEsc, /* () */0);
+    } else {
+      return /* () */0;
+    }
+  };
+  React.useEffect((function () {
+          window.addEventListener("keydown", escapeHandler);
+          return (function (param) {
+                    window.removeEventListener("keydown", escapeHandler);
+                    return /* () */0;
+                  });
+        }), /* array */[]);
   return React.createElement("div", {
               className: Css.style(/* :: */[
                     Css.position(/* fixed */10615156),
@@ -40,21 +97,12 @@ function App$Modal$Overlay(Props) {
                                 /* :: */[
                                   Css.width(Css.vw(100)),
                                   /* :: */[
-                                    Css.background(/* `hex */[
-                                          5194459,
-                                          "000"
-                                        ]),
+                                    Css.display(/* flex */-1010954439),
                                     /* :: */[
-                                      Css.opacity(0.5),
+                                      Css.flexDirection(/* column */-963948842),
                                       /* :: */[
-                                        Css.display(/* flex */-1010954439),
-                                        /* :: */[
-                                          Css.flexDirection(/* column */-963948842),
-                                          /* :: */[
-                                            Css.justifyContent(/* center */98248149),
-                                            /* [] */0
-                                          ]
-                                        ]
+                                        Css.justifyContent(/* center */98248149),
+                                        /* [] */0
                                       ]
                                     ]
                                   ]
@@ -68,7 +116,7 @@ function App$Modal$Overlay(Props) {
                   ]),
               onClick: (function (e) {
                   e.stopPropagation();
-                  return Curry._1(onClick, e);
+                  return Curry._1(onOverlayClick, e);
                 })
             }, children);
 }
@@ -79,24 +127,31 @@ function App$Modal$ModalContentWrapper(Props) {
   var children = Props.children;
   return React.createElement("div", {
               className: Css.style(/* :: */[
-                    Css.background(/* `hex */[
-                          5194459,
-                          "fff"
-                        ]),
+                    Css.zIndex(999),
                     /* :: */[
-                      Css.maxWidth(/* `percent */[
-                            -119887163,
-                            50
+                      Css.background(/* `hex */[
+                            5194459,
+                            "fff"
                           ]),
                       /* :: */[
-                        Css.marginLeft(/* auto */-1065951377),
+                        Css.maxWidth(/* `percent */[
+                              -119887163,
+                              50
+                            ]),
                         /* :: */[
-                          Css.marginRight(/* auto */-1065951377),
-                          /* [] */0
+                          Css.marginLeft(/* auto */-1065951377),
+                          /* :: */[
+                            Css.marginRight(/* auto */-1065951377),
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
                   ]),
+              onKeyPress: (function (e) {
+                  console.log("sadfsd");
+                  return /* () */0;
+                }),
               onClick: (function (e) {
                   e.stopPropagation();
                   console.log("from inside");
@@ -110,11 +165,12 @@ var ModalContentWrapper = /* module */[/* make */App$Modal$ModalContentWrapper];
 function renderToBody(element, onOverlayClick, onEsc) {
   var $$document$1 = document;
   var partial_arg = React.createElement(App$Modal$Overlay, {
-        children: React.createElement(App$Modal$ModalContentWrapper, {
-              children: element
-            }),
-        onClick: onOverlayClick
-      });
+        children: null,
+        onOverlayClick: onOverlayClick,
+        onEsc: onEsc
+      }, React.createElement(App$Modal$Cover, { }), React.createElement(App$Modal$ModalContentWrapper, {
+            children: element
+          }));
   return Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call($$document$1.getElementsByTagName("body")), 0), null, (function (param) {
                 return ReactDom.createPortal(partial_arg, param);
               }));
@@ -133,6 +189,7 @@ function App$Modal(Props) {
 }
 
 var Modal = /* module */[
+  /* Cover */Cover,
   /* Overlay */Overlay,
   /* ModalContentWrapper */ModalContentWrapper,
   /* renderToBody */renderToBody,
