@@ -3,6 +3,30 @@ Css.(
 );
 
 module Modal = {
+  module Helper = {
+    type overFlow =
+      | Hidden
+      | Auto;
+
+    let convert =
+      fun
+      | Hidden => "hidden"
+      | Auto => "auto";
+
+    let setBodyOverflow = value =>
+      Webapi.Dom.document
+      ->Webapi.Dom.Document.asHtmlDocument
+      ->Belt.Option.flatMap(Webapi.Dom.HtmlDocument.body)
+      ->Belt.Option.flatMap(Webapi.Dom.Element.asHtmlElement)
+      ->Belt.Option.mapWithDefault(
+          (),
+          Webapi.Dom.HtmlElement.setAttribute(
+            "style",
+            "overflow:" ++ value->convert,
+          ),
+        );
+  };
+
   module Cover = {
     [@react.component]
     let make = () => {
@@ -50,32 +74,11 @@ module Modal = {
 
       React.useEffect1(
         () => {
-          Webapi.Dom.document
-          ->Webapi.Dom.Document.asHtmlDocument
-          ->Belt.Option.flatMap(x => Webapi.Dom.HtmlDocument.body(x))
-          ->Belt.Option.flatMap(x => Webapi.(Dom.Element.asHtmlElement(x)))
-          ->Belt.Option.mapWithDefault((), x =>
-              Webapi.Dom.HtmlElement.setAttribute(
-                "style",
-                "overflow:hidden",
-                x,
-              )
-            );
+          open Helper;
 
-          Some(
-            () =>
-              Webapi.Dom.document
-              ->Webapi.Dom.Document.asHtmlDocument
-              ->Belt.Option.flatMap(Webapi.Dom.HtmlDocument.body)
-              ->Belt.Option.flatMap(Webapi.Dom.Element.asHtmlElement)
-              ->Belt.Option.mapWithDefault(
-                  (),
-                  Webapi.Dom.HtmlElement.setAttribute(
-                    "style",
-                    "overflow:auto",
-                  ),
-                ),
-          );
+          setBodyOverflow(Hidden);
+
+          Some(() => setBodyOverflow(Auto));
         },
         [||],
       );
@@ -154,9 +157,26 @@ let make = () => {
   let (isOpen, setOpen) = React.useState(() => false);
 
   <div className=Css.(style([4000->px->height]))>
-    <button onClick={_e => setOpen(_ => true)}>
-      "open the modal"->React.string
-    </button>
+    <div>
+      <button onClick={_e => setOpen(_ => true)}>
+        "open the modal"->React.string
+      </button>
+    </div>
+    <div>
+      <button onClick={_e => setOpen(_ => true)}>
+        "open the modal"->React.string
+      </button>
+    </div>
+    <div>
+      <button onClick={_e => setOpen(_ => true)}>
+        "open the modal"->React.string
+      </button>
+    </div>
+    <div>
+      <button onClick={_e => setOpen(_ => true)}>
+        "open the modal"->React.string
+      </button>
+    </div>
     <Modal
       isOpen
       onOverlayClick={_e => setOpen(_ => false)}

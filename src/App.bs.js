@@ -22,6 +22,31 @@ Css.$$global("body", /* :: */[
       ]
     ]);
 
+function convert(param) {
+  if (param) {
+    return "auto";
+  } else {
+    return "hidden";
+  }
+}
+
+function setBodyOverflow(value) {
+  var partial_arg = "overflow:" + (
+    value ? "auto" : "hidden"
+  );
+  return Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
+                        return Caml_option.nullable_to_opt(prim.body);
+                      })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (param) {
+                param.setAttribute("style", partial_arg);
+                return /* () */0;
+              }));
+}
+
+var Helper = /* module */[
+  /* convert */convert,
+  /* setBodyOverflow */setBodyOverflow
+];
+
 function App$Modal$Cover(Props) {
   return React.createElement("div", {
               className: Css.style(/* :: */[
@@ -83,19 +108,9 @@ function App$Modal$Overlay(Props) {
                   });
         }), /* array */[]);
   React.useEffect((function () {
-          Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (x) {
-                          return Caml_option.nullable_to_opt(x.body);
-                        })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (x) {
-                  x.setAttribute("style", "overflow:hidden");
-                  return /* () */0;
-                }));
+          setBodyOverflow(/* Hidden */0);
           return (function (param) {
-                    return Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
-                                          return Caml_option.nullable_to_opt(prim.body);
-                                        })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (param) {
-                                  param.setAttribute("style", "overflow:auto");
-                                  return /* () */0;
-                                }));
+                    return setBodyOverflow(/* Auto */1);
                   });
         }), /* array */[]);
   return React.createElement("div", {
@@ -203,6 +218,7 @@ function App$Modal(Props) {
 }
 
 var Modal = /* module */[
+  /* Helper */Helper,
   /* Cover */Cover,
   /* Overlay */Overlay,
   /* ModalContentWrapper */ModalContentWrapper,
@@ -220,13 +236,31 @@ function App(Props) {
                     Css.height(Css.px(4000)),
                     /* [] */0
                   ])
-            }, React.createElement("button", {
-                  onClick: (function (_e) {
-                      return Curry._1(setOpen, (function (param) {
-                                    return true;
-                                  }));
-                    })
-                }, "open the modal"), React.createElement(App$Modal, {
+            }, React.createElement("div", undefined, React.createElement("button", {
+                      onClick: (function (_e) {
+                          return Curry._1(setOpen, (function (param) {
+                                        return true;
+                                      }));
+                        })
+                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
+                      onClick: (function (_e) {
+                          return Curry._1(setOpen, (function (param) {
+                                        return true;
+                                      }));
+                        })
+                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
+                      onClick: (function (_e) {
+                          return Curry._1(setOpen, (function (param) {
+                                        return true;
+                                      }));
+                        })
+                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
+                      onClick: (function (_e) {
+                          return Curry._1(setOpen, (function (param) {
+                                        return true;
+                                      }));
+                        })
+                    }, "open the modal")), React.createElement(App$Modal, {
                   isOpen: match[0],
                   onOverlayClick: (function (_e) {
                       return Curry._1(setOpen, (function (param) {
