@@ -128,10 +128,7 @@ module Modal = {
 
       <div
         ref={overlayRef->ReactDOMRe.Ref.domRef}
-        onClick={e => {
-          e->ReactEvent.Mouse.stopPropagation;
-          e->onOverlayClick;
-        }}
+        onClick=onOverlayClick
         className=Css.(
           style([
             `fixed->position,
@@ -156,7 +153,7 @@ module Modal = {
     [@react.component]
     let make = (~children) => {
       <div
-        onClick={e => e->ReactEvent.Mouse.stopPropagation}
+        onClick=ReactEvent.Mouse.stopPropagation
         className=Css.(
           style([
             999->zIndex,

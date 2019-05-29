@@ -185,10 +185,7 @@ function App$Modal$Overlay(Props) {
                       ]
                     ]
                   ]),
-              onClick: (function (e) {
-                  e.stopPropagation();
-                  return Curry._1(onOverlayClick, e);
-                })
+              onClick: onOverlayClick
             }, children);
 }
 
@@ -219,8 +216,8 @@ function App$Modal$ModalContentWrapper(Props) {
                       ]
                     ]
                   ]),
-              onClick: (function (e) {
-                  e.stopPropagation();
+              onClick: (function (prim) {
+                  prim.stopPropagation();
                   return /* () */0;
                 })
             }, children);
