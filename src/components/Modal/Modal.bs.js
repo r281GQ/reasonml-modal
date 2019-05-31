@@ -2,16 +2,13 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Uuid = require("uuid");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var ReactDom = require("react-dom");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
-var Belt_HashMapString = require("bs-platform/lib/js/belt_HashMapString.js");
-var Webapi__Dom__Element = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Element.js");
-var Webapi__Dom__Document = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Document.js");
+var FocusContainer$ReactHooksTemplate = require("../FocusContainer.bs.js");
 
 Css.$$global("body", /* :: */[
       Css.margin(Css.px(0)),
@@ -24,127 +21,7 @@ Css.$$global("body", /* :: */[
       ]
     ]);
 
-function convert(param) {
-  if (param) {
-    return "auto";
-  } else {
-    return "hidden";
-  }
-}
-
-function setScrollLock(value) {
-  var partial_arg = "overflow:" + (
-    value ? "auto" : "hidden"
-  );
-  return Belt_Option.mapWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
-                        return Caml_option.nullable_to_opt(prim.body);
-                      })), Webapi__Dom__Element.asHtmlElement), /* () */0, (function (param) {
-                param.setAttribute("style", partial_arg);
-                return /* () */0;
-              }));
-}
-
-var Helper = /* module */[
-  /* convert */convert,
-  /* setScrollLock */setScrollLock
-];
-
-var f = (/(svg|a|area|input|select|textarea|button|iframe|div)$/);
-
-function check(param) {
-  return f.test(param);
-}
-
-var u = React.createRef();
-
-var focusContext = React.createContext(/* record */[
-      /* lockScroll */true,
-      /* lockFocus */true,
-      /* target */u
-    ]);
-
-var make = focusContext.Provider;
-
-var Inner = /* module */[
-  /* u */u,
-  /* focusContext */focusContext,
-  /* make */make
-];
-
-function Modal$Modal$FocusContainer(Props) {
-  var children = Props.children;
-  var value = Props.value;
-  var focusTracker = React.useRef(Belt_HashMapString.make(20));
-  React.useEffect((function () {
-          var match = value[/* lockScroll */0];
-          if (match) {
-            setScrollLock(/* Lock */0);
-          }
-          return (function (param) {
-                    return setScrollLock(/* Unlock */1);
-                  });
-        }), /* array */[]);
-  React.useEffect((function () {
-          var $$process = function (param) {
-            return Belt_Array.forEach(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
-                                              return Caml_option.nullable_to_opt(prim.body);
-                                            })), Webapi__Dom__Element.asHtmlElement), (function (prim) {
-                                      return prim.childNodes;
-                                    })), /* array */[], (function (prim) {
-                                  return Array.prototype.slice.call(prim);
-                                })), (function (node) {
-                              var match = value[/* target */2].current;
-                              if (match == null) {
-                                return true;
-                              } else {
-                                return !node.contains(match);
-                              }
-                            })), (function (node) {
-                          return Belt_Array.forEach(Belt_Array.map(Belt_Array.keep(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Webapi__Dom__Element.ofNode(node), (function (param) {
-                                                            return param.getElementsByTagName("*");
-                                                          })), /* array */[], (function (prim) {
-                                                        return Array.prototype.slice.call(prim);
-                                                      })), (function (x) {
-                                                    return f.test(x.tagName.toLowerCase());
-                                                  })), (function (x) {
-                                                return Belt_Option.mapWithDefault(Caml_option.nullable_to_opt(x.getAttribute("tabindex")), true, (function (x) {
-                                                              return x !== "-1";
-                                                            }));
-                                              })), (function (x) {
-                                            console.log(x);
-                                            return x;
-                                          })), (function (x) {
-                                        Belt_HashMapString.set(focusTracker.current, Uuid.v4(), x);
-                                        x.setAttribute("tabindex", "-1");
-                                        return /* () */0;
-                                      }));
-                        }));
-          };
-          setTimeout((function (param) {
-                  $$process(/* () */0);
-                  return /* () */0;
-                }), 10);
-          return (function (param) {
-                    return Belt_HashMapString.forEach(focusTracker.current, (function (_key, element) {
-                                  element.removeAttribute("tabindex");
-                                  return /* () */0;
-                                }));
-                  });
-        }), /* array */[]);
-  return React.createElement(make, {
-              value: value,
-              children: children
-            });
-}
-
-var FocusContainer = /* module */[
-  /* f */f,
-  /* check */check,
-  /* Inner */Inner,
-  /* make */Modal$Modal$FocusContainer
-];
-
-function Modal$Modal$Cover(Props) {
+function Modal$Cover(Props) {
   return React.createElement("div", {
               className: Css.style(/* :: */[
                     Css.position(/* fixed */10615156),
@@ -183,9 +60,9 @@ function Modal$Modal$Cover(Props) {
             });
 }
 
-var Cover = /* module */[/* make */Modal$Modal$Cover];
+var Cover = /* module */[/* make */Modal$Cover];
 
-var make$1 = React.forwardRef((function (Props, ref_) {
+var make = React.forwardRef((function (Props, ref_) {
         var children = Props.children;
         var onOverlayClick = Props.onOverlayClick;
         var onEsc = Props.onEsc;
@@ -250,9 +127,9 @@ var make$1 = React.forwardRef((function (Props, ref_) {
         return React.createElement("div", tmp, children);
       }));
 
-var Overlay = /* module */[/* make */make$1];
+var Overlay = /* module */[/* make */make];
 
-function Modal$Modal$ModalContentWrapper(Props) {
+function Modal$ModalContentWrapper(Props) {
   var children = Props.children;
   return React.createElement("div", {
               className: Css.style(/* :: */[
@@ -284,17 +161,17 @@ function Modal$Modal$ModalContentWrapper(Props) {
             }, children);
 }
 
-var ModalContentWrapper = /* module */[/* make */Modal$Modal$ModalContentWrapper];
+var ModalContentWrapper = /* module */[/* make */Modal$ModalContentWrapper];
 
 function renderToBody(element, onOverlayClick, onEsc, overlayRef) {
   var $$document$1 = document;
-  var partial_arg = React.createElement(Modal$Modal$FocusContainer, {
-        children: React.createElement(make$1, {
+  var partial_arg = React.createElement(FocusContainer$ReactHooksTemplate.make, {
+        children: React.createElement(make, {
               children: null,
               onOverlayClick: onOverlayClick,
               onEsc: onEsc,
               ref: overlayRef
-            }, React.createElement(Modal$Modal$Cover, { }), React.createElement(Modal$Modal$ModalContentWrapper, {
+            }, React.createElement(Modal$Cover, { }), React.createElement(Modal$ModalContentWrapper, {
                   children: element
                 })),
         value: /* record */[
@@ -308,7 +185,7 @@ function renderToBody(element, onOverlayClick, onEsc, overlayRef) {
               }));
 }
 
-function Modal$Modal(Props) {
+function Modal(Props) {
   var isOpen = Props.isOpen;
   var onOverlayClick = Props.onOverlayClick;
   var onEsc = Props.onEsc;
@@ -321,68 +198,11 @@ function Modal$Modal(Props) {
   }
 }
 
-var Modal = /* module */[
-  /* Helper */Helper,
-  /* FocusContainer */FocusContainer,
-  /* Cover */Cover,
-  /* Overlay */Overlay,
-  /* ModalContentWrapper */ModalContentWrapper,
-  /* renderToBody */renderToBody,
-  /* make */Modal$Modal
-];
+var make$1 = Modal;
 
-function Modal$1(Props) {
-  var match = React.useState((function () {
-          return false;
-        }));
-  var setOpen = match[1];
-  return React.createElement("div", {
-              className: Css.style(/* :: */[
-                    Css.height(Css.px(4000)),
-                    /* [] */0
-                  ])
-            }, React.createElement("div", undefined, React.createElement("button", {
-                      onClick: (function (_e) {
-                          return Curry._1(setOpen, (function (param) {
-                                        return true;
-                                      }));
-                        })
-                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
-                      onClick: (function (_e) {
-                          return Curry._1(setOpen, (function (param) {
-                                        return true;
-                                      }));
-                        })
-                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
-                      onClick: (function (_e) {
-                          return Curry._1(setOpen, (function (param) {
-                                        return true;
-                                      }));
-                        })
-                    }, "open the modal")), React.createElement("div", undefined, React.createElement("button", {
-                      onClick: (function (_e) {
-                          return Curry._1(setOpen, (function (param) {
-                                        return true;
-                                      }));
-                        })
-                    }, "open the modal")), React.createElement(Modal$Modal, {
-                  isOpen: match[0],
-                  onOverlayClick: (function (_e) {
-                      return Curry._1(setOpen, (function (param) {
-                                    return false;
-                                  }));
-                    }),
-                  onEsc: (function (_e) {
-                      return Curry._1(setOpen, (function (param) {
-                                    return false;
-                                  }));
-                    }),
-                  children: React.createElement("div", undefined, "this is the modal content")
-                }));
-}
-
-var make$2 = Modal$1;
-
-exports.Modal = Modal;
-exports.make = make$2;
+exports.Cover = Cover;
+exports.Overlay = Overlay;
+exports.ModalContentWrapper = ModalContentWrapper;
+exports.renderToBody = renderToBody;
+exports.make = make$1;
 /*  Not a pure module */
