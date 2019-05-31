@@ -2,12 +2,14 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Uuid = require("uuid");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var ReactDom = require("react-dom");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
+var Belt_HashMapString = require("bs-platform/lib/js/belt_HashMapString.js");
 var Webapi__Dom__Element = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Element.js");
 var Webapi__Dom__Document = require("bs-webapi/src/Webapi/Webapi__Dom/Webapi__Dom__Document.js");
 
@@ -72,6 +74,7 @@ var Inner = /* module */[
 function Modal$Modal$FocusContainer(Props) {
   var children = Props.children;
   var value = Props.value;
+  var focusTracker = React.useRef(Belt_HashMapString.make(20));
   React.useEffect((function () {
           var match = value[/* lockScroll */0];
           if (match) {
@@ -83,7 +86,7 @@ function Modal$Modal$FocusContainer(Props) {
         }), /* array */[]);
   React.useEffect((function () {
           var $$process = function (param) {
-            return Belt_Array.keep(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
+            return Belt_Array.forEach(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Belt_Option.flatMap(Belt_Option.flatMap(Webapi__Dom__Document.asHtmlDocument(document), (function (prim) {
                                               return Caml_option.nullable_to_opt(prim.body);
                                             })), Webapi__Dom__Element.asHtmlElement), (function (prim) {
                                       return prim.childNodes;
@@ -97,17 +100,24 @@ function Modal$Modal$FocusContainer(Props) {
                                 return !node.contains(match);
                               }
                             })), (function (node) {
-                          Belt_Array.forEach(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Webapi__Dom__Element.ofNode(node), (function (param) {
-                                              return param.getElementsByTagName("*");
-                                            })), /* array */[], (function (prim) {
-                                          return Array.prototype.slice.call(prim);
-                                        })), (function (x) {
-                                      return f.test(x.tagName.toLowerCase());
-                                    })), (function (x) {
-                                  x.setAttribute("tabindex", "-1");
-                                  return /* () */0;
-                                }));
-                          return true;
+                          return Belt_Array.forEach(Belt_Array.map(Belt_Array.keep(Belt_Array.keep(Belt_Option.mapWithDefault(Belt_Option.map(Webapi__Dom__Element.ofNode(node), (function (param) {
+                                                            return param.getElementsByTagName("*");
+                                                          })), /* array */[], (function (prim) {
+                                                        return Array.prototype.slice.call(prim);
+                                                      })), (function (x) {
+                                                    return f.test(x.tagName.toLowerCase());
+                                                  })), (function (x) {
+                                                return Belt_Option.mapWithDefault(Caml_option.nullable_to_opt(x.getAttribute("tabindex")), true, (function (x) {
+                                                              return x !== "-1";
+                                                            }));
+                                              })), (function (x) {
+                                            console.log(x);
+                                            return x;
+                                          })), (function (x) {
+                                        Belt_HashMapString.set(focusTracker.current, Uuid.v4(), x);
+                                        x.setAttribute("tabindex", "-1");
+                                        return /* () */0;
+                                      }));
                         }));
           };
           setTimeout((function (param) {

@@ -2,6 +2,8 @@ Css.(
   global("body", [0->px->margin, `relative->position, 100.->vh->minHeight])
 );
 
+[@bs.module "uuid"] external uuid: unit => string = "v4";
+
 module Modal = {
   module Helper = {
     type overFlow =
@@ -60,6 +62,9 @@ module Modal = {
 
     [@react.component]
     let make = (~children, ~value: t) => {
+      let focusTracker =
+        React.useRef(Belt.HashMap.String.make(~hintSize=20));
+
       React.useEffect1(
         () => {
           open Helper;
@@ -89,7 +94,7 @@ module Modal = {
                 | None => true
                 }
               )
-            ->Belt.Array.keep(node => {
+            ->Belt.Array.forEach(node =>
                 node
                 ->Webapi.Dom.Element.ofNode
                 ->Belt.Option.map(
@@ -104,12 +109,21 @@ module Modal = {
                     x->Webapi.Dom.Element.tagName->Js.String.toLowerCase->check
                   )
                 // Webapi.Dom.Element.hasAttribute("tabindex"),
-                ->Belt.Array.forEach(x =>
-                    Webapi.Dom.Element.setAttribute("tabindex", "-1", x)
-                  );
+                ->Belt.Array.keep(x =>
+                    Webapi.Dom.Element.getAttribute("tabindex", x)
+                    ->Belt.Option.mapWithDefault(true, x => x !== "-1")
+                  )
+                ->Belt.Array.map(x => {
+                    Js.log(x);
+                    x;
+                  })
+                ->Belt.Array.forEach(x => {
+                    React.Ref.current(focusTracker)
+                    ->Belt.HashMap.String.set(uuid(), x);
 
-                true;
-              });
+                    Webapi.Dom.Element.setAttribute("tabindex", "-1", x);
+                  })
+              );
 
           Js.Global.setTimeout(() => ()->process->ignore, 10)->ignore;
 
