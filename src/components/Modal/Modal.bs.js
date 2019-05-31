@@ -124,7 +124,12 @@ function Modal$Modal$FocusContainer(Props) {
                   $$process(/* () */0);
                   return /* () */0;
                 }), 10);
-          return undefined;
+          return (function (param) {
+                    return Belt_HashMapString.forEach(focusTracker.current, (function (_key, element) {
+                                  element.removeAttribute("tabindex");
+                                  return /* () */0;
+                                }));
+                  });
         }), /* array */[]);
   return React.createElement(make, {
               value: value,

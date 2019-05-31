@@ -127,7 +127,13 @@ module Modal = {
 
           Js.Global.setTimeout(() => ()->process->ignore, 10)->ignore;
 
-          None;
+          Some(
+            () =>
+              React.Ref.current(focusTracker)
+              ->Belt.HashMap.String.forEach((_key, element) =>
+                  Webapi.Dom.Element.removeAttribute("tabindex", element)
+                ),
+          );
         },
         [||],
       );
