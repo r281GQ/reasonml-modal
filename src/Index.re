@@ -1,1 +1,1 @@
-ReactDOMRe.renderToElementWithId(<Modal />, "root");
+ReactDOMRe.renderToElementWithId(<App />, "root") /* ReactDOMRe.renderToElementWithId(<Drop />, "drop")*/;
