@@ -105,7 +105,12 @@ let renderToBody = (~element, ~onOverlayClick, ~onEsc, ~overlayRef) => {
       React.null,
       ReactDOMRe.createPortal(
         <FocusContainer
-          value={lockFocus: true, lockScroll: true, target: overlayRef}>
+          value={
+            lockFocus: true,
+            lockScroll: true,
+            target: overlayRef,
+            preventTabEscape: true,
+          }>
           <Overlay
             onOverlayClick onEsc ref={overlayRef->ReactDOMRe.Ref.domRef}>
             <Cover />

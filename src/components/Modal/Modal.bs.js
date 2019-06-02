@@ -177,7 +177,8 @@ function renderToBody(element, onOverlayClick, onEsc, overlayRef) {
         value: /* record */[
           /* lockScroll */true,
           /* lockFocus */true,
-          /* target */overlayRef
+          /* target */overlayRef,
+          /* preventTabEscape */true
         ]
       });
   return Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call($$document$1.getElementsByTagName("body")), 0), null, (function (param) {
