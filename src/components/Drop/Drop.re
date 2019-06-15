@@ -11,6 +11,18 @@ let body: Dom.element =
   ->Belt.Array.get(0)
   ->Belt.Option.mapWithDefault(fakeBody, identity);
 
+let top = (element: Dom.element) =>
+  element
+  ->Webapi.Dom.Element.getBoundingClientRect
+  ->Webapi.Dom.DomRect.top
+  ->int_of_float;
+
+let bottom = (element: Dom.element) =>
+  element
+  ->Webapi.Dom.Element.getBoundingClientRect
+  ->Webapi.Dom.DomRect.bottom
+  ->int_of_float;
+
 [@react.component]
 let make = (~content: React.element, ~children) => {
   let target: React.Ref.t(Js.Nullable.t(Dom.element)) =
@@ -23,7 +35,8 @@ let make = (~content: React.element, ~children) => {
     React.useState(() => Js.Nullable.null);
 
   let (isOpen, setOpen) = React.useState(() => false);
-  let clonedElement =
+
+  let targetElement =
     ReasonReact.cloneElement(
       content,
       ~props={
@@ -36,7 +49,7 @@ let make = (~content: React.element, ~children) => {
             style([
               20->px->padding,
               `fixed->position,
-              0->px->top,
+              0->px->Css.top,
               Css.red->backgroundColor,
             ])
           ),
@@ -44,7 +57,7 @@ let make = (~content: React.element, ~children) => {
       [||],
     );
 
-  let clonedElementC =
+  let dropElement =
     ReasonReact.cloneElement(
       children,
       ~props={
@@ -119,68 +132,59 @@ let make = (~content: React.element, ~children) => {
       dropRef->React.Ref.current->Js.toOption,
     ) {
     | (Some(targetElement), Some(dropElement)) =>
-      let scrollY = Webapi.Dom.window |> Webapi.Dom.Window.scrollY;
+      let viewPortHeight = Webapi.Dom.window |> Webapi.Dom.Window.innerHeight;
 
-      let innerHeight = Webapi.Dom.window |> Webapi.Dom.Window.innerHeight;
+      let targetTop = targetElement |> top;
 
-      let distanceFromVPTop =
+      let targetBottom = targetElement |> bottom;
+
+      let targetHeight = targetBottom - targetTop;
+
+      let dropTop = dropElement |> top;
+
+      let dropBottom = dropElement |> bottom;
+
+      let i = dropTop - targetHeight;
+
+      let isDropBottomBelowViewPort =
+        dropBottom + targetHeight >= viewPortHeight;
+
+      let isDropBottomAboveViewPort = dropBottom < 0;
+
+      let isDropTopBelowViewPort = dropTop >= viewPortHeight;
+
+      switch (
+        isDropBottomBelowViewPort,
+        isDropBottomAboveViewPort,
+        isDropTopBelowViewPort,
+      ) {
+      | (true, _, true) =>
         targetElement
-        ->Webapi.Dom.Element.getBoundingClientRect
-        ->Webapi.Dom.DomRect.top;
-
-      let distanceFromVPBottom =
+        |> Webapi.Dom.Element.setAttribute(
+             "style",
+             "transform: translateY("
+             ++ (viewPortHeight - targetHeight)->Js.Int.toString
+             ++ "px)",
+           )
+      | (true, _, _) =>
         targetElement
-        ->Webapi.Dom.Element.getBoundingClientRect
-        ->Webapi.Dom.DomRect.bottom;
-
-      let distanceFromVPTopy =
-        dropElement
-        ->Webapi.Dom.Element.getBoundingClientRect
-        ->Webapi.Dom.DomRect.top;
-
-      // distanceFromVPTop->Js.log;
-
-      // distanceFromVPTopy->Js.log;
-
-      let u = (distanceFromVPTop -. distanceFromVPTopy)->int_of_float;
-
-      // Js.log(u - 18);
-      Js.log(distanceFromVPTopy);
-
-      let i = (distanceFromVPTopy +. 18.)->int_of_float;
-
-      // "i"->Js.log;
-      i->Js.log;
-
-      "bottom"->Js.log;
-      distanceFromVPBottom->Js.log;
-
-      if (distanceFromVPTopy +. 18. >= 0.) {
-        // "ww"->Js.log;
-        target
-        ->React.Ref.current
-        ->Js.toOption
-        ->Belt.Option.map(
-            Webapi.Dom.Element.setAttribute(
-              "style",
-              "transform: translateY(" ++ i->Js.Int.toString ++ "px)",
-            ),
-          )
-        ->ignore;
-      } else {
-        ();
-      };
-      if (distanceFromVPTopy +. 18. < 0. && distanceFromVPTop > 0.) {
-        "run"->Js.log;
+        |> Webapi.Dom.Element.setAttribute(
+             "style",
+             "transform: translateY(" ++ i->Js.Int.toString ++ "px)",
+           )
+      | (_, true, _) =>
         targetElement
         |> Webapi.Dom.Element.setAttribute(
              "style",
              "transform: translateY(" ++ "0" ++ "px)",
-           );
-      } else {
-        ();
+           )
+      | (_, _, _) =>
+        targetElement
+        |> Webapi.Dom.Element.setAttribute(
+             "style",
+             "transform: translateY(" ++ dropBottom->Js.Int.toString ++ "px)",
+           )
       };
-    // ();
 
     | (_, _) => ()
     };
@@ -209,7 +213,7 @@ let make = (~content: React.element, ~children) => {
   );
 
   <React.Fragment>
-    clonedElementC
+    dropElement
     {isOpen
        ? ReactDOMRe.createPortal(
            <FocusContainer
@@ -219,7 +223,7 @@ let make = (~content: React.element, ~children) => {
                lockFocus: true,
                preventTabEscape: false,
              }>
-             clonedElement
+             targetElement
            </FocusContainer>,
            body,
          )

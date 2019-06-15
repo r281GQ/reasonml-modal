@@ -7,7 +7,6 @@ var React = require("react");
 var ReactDom = require("react-dom");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
-var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var FocusContainer$ReactHooksTemplate = require("../FocusContainer.bs.js");
 
 function identity(x) {
@@ -19,6 +18,14 @@ var doc = document;
 var fakeBody = doc.createElement("div");
 
 var body = Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call(doc.getElementsByTagName("body")), 0), fakeBody, identity);
+
+function top(element) {
+  return element.getBoundingClientRect().top | 0;
+}
+
+function bottom(element) {
+  return element.getBoundingClientRect().bottom | 0;
+}
 
 function Drop(Props) {
   var content = Props.content;
@@ -33,7 +40,7 @@ function Drop(Props) {
           return false;
         }));
   var setOpen = match$1[1];
-  var clonedElement = React.cloneElement(content, {
+  var targetElement = React.cloneElement(content, {
         ref: (function (ref1) {
             target.current = ref1;
             return Curry._1(setTargetState, (function (param) {
@@ -54,7 +61,7 @@ function Drop(Props) {
               ]
             ])
       });
-  var clonedElementC = React.cloneElement(children, {
+  var dropElement = React.cloneElement(children, {
         ref: (function (ref) {
             drop.current = ref;
             return /* () */0;
@@ -113,28 +120,29 @@ function Drop(Props) {
     if ((match == null) || (match$1 == null)) {
       return /* () */0;
     } else {
-      window.scrollY;
-      window.innerHeight;
-      var distanceFromVPTop = match.getBoundingClientRect().top;
-      var distanceFromVPBottom = match.getBoundingClientRect().bottom;
-      var distanceFromVPTopy = match$1.getBoundingClientRect().top;
-      console.log(distanceFromVPTopy);
-      var i = distanceFromVPTopy + 18 | 0;
-      console.log(i);
-      console.log("bottom");
-      console.log(distanceFromVPBottom);
-      if (distanceFromVPTopy + 18 >= 0) {
-        var partial_arg = "transform: translateY(" + (i.toString() + "px)");
-        Belt_Option.map(Caml_option.nullable_to_opt(target.current), (function (param) {
-                param.setAttribute("style", partial_arg);
-                return /* () */0;
-              }));
-      }
-      if (distanceFromVPTopy + 18 < 0 && distanceFromVPTop > 0) {
-        console.log("run");
+      var viewPortHeight = window.innerHeight;
+      var targetTop = match.getBoundingClientRect().top | 0;
+      var targetBottom = match.getBoundingClientRect().bottom | 0;
+      var targetHeight = targetBottom - targetTop | 0;
+      var dropTop = match$1.getBoundingClientRect().top | 0;
+      var dropBottom = match$1.getBoundingClientRect().bottom | 0;
+      var i = dropTop - targetHeight | 0;
+      var isDropBottomBelowViewPort = (dropBottom + targetHeight | 0) >= viewPortHeight;
+      var isDropBottomAboveViewPort = dropBottom < 0;
+      var isDropTopBelowViewPort = dropTop >= viewPortHeight;
+      if (isDropBottomBelowViewPort) {
+        if (isDropTopBelowViewPort) {
+          match.setAttribute("style", "transform: translateY(" + ((viewPortHeight - targetHeight | 0).toString() + "px)"));
+          return /* () */0;
+        } else {
+          match.setAttribute("style", "transform: translateY(" + (i.toString() + "px)"));
+          return /* () */0;
+        }
+      } else if (isDropBottomAboveViewPort) {
         match.setAttribute("style", "transform: translateY(0px)");
         return /* () */0;
       } else {
+        match.setAttribute("style", "transform: translateY(" + (dropBottom.toString() + "px)"));
         return /* () */0;
       }
     }
@@ -155,8 +163,8 @@ function Drop(Props) {
         }), /* array */[match[0]]);
   return React.createElement(React.Fragment, {
               children: null
-            }, clonedElementC, match$1[0] ? ReactDom.createPortal(React.createElement(FocusContainer$ReactHooksTemplate.make, {
-                        children: clonedElement,
+            }, dropElement, match$1[0] ? ReactDom.createPortal(React.createElement(FocusContainer$ReactHooksTemplate.make, {
+                        children: targetElement,
                         value: /* record */[
                           /* lockScroll */false,
                           /* lockFocus */true,
@@ -172,5 +180,7 @@ exports.identity = identity;
 exports.doc = doc;
 exports.fakeBody = fakeBody;
 exports.body = body;
+exports.top = top;
+exports.bottom = bottom;
 exports.make = make;
 /* doc Not a pure module */
