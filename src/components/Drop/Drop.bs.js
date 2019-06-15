@@ -126,7 +126,6 @@ function Drop(Props) {
       var targetHeight = targetBottom - targetTop | 0;
       var dropTop = match$1.getBoundingClientRect().top | 0;
       var dropBottom = match$1.getBoundingClientRect().bottom | 0;
-      var i = dropTop - targetHeight | 0;
       var isDropBottomBelowViewPort = (dropBottom + targetHeight | 0) >= viewPortHeight;
       var isDropBottomAboveViewPort = dropBottom < 0;
       var isDropTopBelowViewPort = dropTop >= viewPortHeight;
@@ -135,7 +134,7 @@ function Drop(Props) {
           match.setAttribute("style", "transform: translateY(" + ((viewPortHeight - targetHeight | 0).toString() + "px)"));
           return /* () */0;
         } else {
-          match.setAttribute("style", "transform: translateY(" + (i.toString() + "px)"));
+          match.setAttribute("style", "transform: translateY(" + ((dropTop - targetHeight | 0).toString() + "px)"));
           return /* () */0;
         }
       } else if (isDropBottomAboveViewPort) {

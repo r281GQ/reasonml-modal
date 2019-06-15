@@ -144,8 +144,6 @@ let make = (~content: React.element, ~children) => {
 
       let dropBottom = dropElement |> bottom;
 
-      let i = dropTop - targetHeight;
-
       let isDropBottomBelowViewPort =
         dropBottom + targetHeight >= viewPortHeight;
 
@@ -170,7 +168,9 @@ let make = (~content: React.element, ~children) => {
         targetElement
         |> Webapi.Dom.Element.setAttribute(
              "style",
-             "transform: translateY(" ++ i->Js.Int.toString ++ "px)",
+             "transform: translateY("
+             ++ (dropTop - targetHeight)->Js.Int.toString
+             ++ "px)",
            )
       | (_, true, _) =>
         targetElement
