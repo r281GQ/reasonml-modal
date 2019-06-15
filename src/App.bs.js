@@ -56,7 +56,10 @@ function App(Props) {
   return React.createElement("div", {
               className: Css.style(/* :: */[
                     Css.height(Css.px(4000)),
-                    /* [] */0
+                    /* :: */[
+                      Css.paddingTop(Css.px(2000)),
+                      /* [] */0
+                    ]
                   ])
             }, React.createElement("div", undefined, React.createElement("button", {
                       onClick: (function (_e) {
@@ -71,7 +74,7 @@ function App(Props) {
                   children: React.createElement("button", {
                         id: "111"
                       }, "test")
-                }));
+                }), React.createElement("div", undefined, "some other content"));
 }
 
 var make = App;

@@ -10,26 +10,42 @@ var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var FocusContainer$ReactHooksTemplate = require("../FocusContainer.bs.js");
 
+function identity(x) {
+  return x;
+}
+
+var doc = document;
+
+var fakeBody = doc.createElement("div");
+
+var body = Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call(doc.getElementsByTagName("body")), 0), fakeBody, identity);
+
 function Drop(Props) {
   var content = Props.content;
   var children = Props.children;
   var target = React.useRef(null);
-  var y = React.useRef(null);
+  var drop = React.useRef(null);
   var match = React.useState((function () {
+          return null;
+        }));
+  var setTargetState = match[1];
+  var match$1 = React.useState((function () {
           return false;
         }));
-  var setOpen = match[1];
+  var setOpen = match$1[1];
   var clonedElement = React.cloneElement(content, {
-        ref: (function (ref) {
-            target.current = ref;
-            return /* () */0;
+        ref: (function (ref1) {
+            target.current = ref1;
+            return Curry._1(setTargetState, (function (param) {
+                          return ref1;
+                        }));
           }),
         className: Css.style(/* :: */[
               Css.padding(Css.px(20)),
               /* :: */[
-                Css.position(/* absolute */-1013592457),
+                Css.position(/* fixed */10615156),
                 /* :: */[
-                  Css.top(Css.px(400)),
+                  Css.top(Css.px(0)),
                   /* :: */[
                     Css.backgroundColor(Css.red),
                     /* [] */0
@@ -40,66 +56,121 @@ function Drop(Props) {
       });
   var clonedElementC = React.cloneElement(children, {
         ref: (function (ref) {
-            y.current = ref;
+            drop.current = ref;
             return /* () */0;
           })
       });
   React.useEffect((function () {
-          var logger = function (d) {
-            Curry._1(setOpen, (function (prev) {
-                    return !prev;
-                  }));
-            console.log(d);
-            return /* () */0;
+          var closeHandler = function (e) {
+            var match = drop.current;
+            var match$1 = target.current;
+            var hasClickHappenedInDropElements;
+            if ((match == null) || (match$1 == null)) {
+              hasClickHappenedInDropElements = false;
+            } else {
+              var hasOccuredInDropElement = match.contains(e.target);
+              var hasOccuredInTargetElement = match$1.contains(e.target);
+              hasClickHappenedInDropElements = hasOccuredInDropElement || hasOccuredInTargetElement;
+            }
+            var match$2 = !hasClickHappenedInDropElements;
+            if (match$2) {
+              return Curry._1(setOpen, (function (param) {
+                            return false;
+                          }));
+            } else {
+              return /* () */0;
+            }
           };
-          var match = y.current;
+          body.addEventListener("click", closeHandler, true);
+          return (function (param) {
+                    body.removeEventListener("click", closeHandler, true);
+                    return /* () */0;
+                  });
+        }));
+  React.useEffect((function () {
+          var clickHandler = function (_e) {
+            return Curry._1(setOpen, (function (prev) {
+                          return !prev;
+                        }));
+          };
+          var match = drop.current;
           if (!(match == null)) {
-            match.addEventListener("click", logger);
+            match.addEventListener("click", clickHandler);
           }
           return (function (param) {
-                    var match = y.current;
+                    var match = drop.current;
                     if (match == null) {
                       return /* () */0;
                     } else {
-                      match.removeEventListener("click", logger);
+                      match.removeEventListener("click", clickHandler);
                       return /* () */0;
                     }
                   });
         }));
+  var update = function (targetRef, dropRef) {
+    var match = targetRef.current;
+    var match$1 = dropRef.current;
+    if ((match == null) || (match$1 == null)) {
+      return /* () */0;
+    } else {
+      window.scrollY;
+      window.innerHeight;
+      var distanceFromVPTop = match.getBoundingClientRect().top;
+      var distanceFromVPBottom = match.getBoundingClientRect().bottom;
+      var distanceFromVPTopy = match$1.getBoundingClientRect().top;
+      console.log(distanceFromVPTopy);
+      var i = distanceFromVPTopy + 18 | 0;
+      console.log(i);
+      console.log("bottom");
+      console.log(distanceFromVPBottom);
+      if (distanceFromVPTopy + 18 >= 0) {
+        var partial_arg = "transform: translateY(" + (i.toString() + "px)");
+        Belt_Option.map(Caml_option.nullable_to_opt(target.current), (function (param) {
+                param.setAttribute("style", partial_arg);
+                return /* () */0;
+              }));
+      }
+      if (distanceFromVPTopy + 18 < 0 && distanceFromVPTop > 0) {
+        console.log("run");
+        match.setAttribute("style", "transform: translateY(0px)");
+        return /* () */0;
+      } else {
+        return /* () */0;
+      }
+    }
+  };
   React.useEffect((function () {
-          window.addEventListener("scroll", (function (e) {
-                  window.scrollY;
-                  window.innerHeight;
-                  Belt_Option.mapWithDefault(Belt_Option.map(Caml_option.nullable_to_opt(target.current), (function (prim) {
-                              return prim.getBoundingClientRect();
-                            })), 0, (function (prim) {
-                          return prim.top;
-                        }));
-                  return /* () */0;
-                }));
-          return undefined;
+          var scrollHander = function (_e) {
+            return update(target, drop);
+          };
+          window.addEventListener("scroll", scrollHander);
+          return (function (param) {
+                    window.removeEventListener("scroll", scrollHander);
+                    return /* () */0;
+                  });
         }));
+  React.useEffect((function () {
+          update(target, drop);
+          return undefined;
+        }), /* array */[match[0]]);
   return React.createElement(React.Fragment, {
               children: null
-            }, clonedElementC, match[0] ? React.createElement("div", {
-                    className: Css.style(/* :: */[
-                          Css.position(/* relative */903134412),
-                          /* [] */0
-                        ])
-                  }, React.createElement(FocusContainer$ReactHooksTemplate.make, {
-                        children: Belt_Option.mapWithDefault(Belt_Array.get(Array.prototype.slice.call(document.getElementsByTagName("body")), 0), null, (function (param) {
-                                return ReactDom.createPortal(clonedElement, param);
-                              })),
+            }, clonedElementC, match$1[0] ? ReactDom.createPortal(React.createElement(FocusContainer$ReactHooksTemplate.make, {
+                        children: clonedElement,
                         value: /* record */[
                           /* lockScroll */false,
                           /* lockFocus */true,
-                          /* target */y,
+                          /* target */target,
                           /* preventTabEscape */false
                         ]
-                      })) : null);
+                      }), body) : null);
 }
 
 var make = Drop;
 
+exports.identity = identity;
+exports.doc = doc;
+exports.fakeBody = fakeBody;
+exports.body = body;
 exports.make = make;
-/* Css Not a pure module */
+/* doc Not a pure module */

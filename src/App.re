@@ -32,7 +32,7 @@ module LoginForm = {
 let make = () => {
   let (isOpen, setOpen) = React.useState(() => false);
 
-  <div className=Css.(style([4000->px->height]))>
+  <div className=Css.(style([4000->px->height, 2000->px->paddingTop]))>
     <div>
       <button onClick={_e => setOpen(_ => true)}>
         "open the modal"->React.string
@@ -41,6 +41,7 @@ let make = () => {
     <Drop content={<div id="000"> "content"->React.string </div>}>
       <button id="111"> "test"->React.string </button>
     </Drop>
+    <div> "some other content"->React.string </div>
   </div>;
   // <Modal
   //   isOpen
